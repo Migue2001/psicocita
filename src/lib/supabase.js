@@ -8,15 +8,16 @@ if (forceDemo || !supabaseUrl || !supabaseAnonKey) {
   console.warn('Modo Demo activo: se usarán datos locales y logins demo.');
 }
 
-// Solo crear cliente si no estamos forzando demo y la URL es válida.
-// Se desactiva multiTab para evitar locks de sesión (AbortError) en ciertos navegadores/ServiceWorkers.
+// FIX #2: eliminamos multiTab: false — esa opción impedía que otras pestañas
+// vieran la sesión activa, causando que se quedaran en blanco o en /login.
+// Supabase maneja multi-pestaña correctamente por defecto con BroadcastChannel.
 export const supabase = (!forceDemo && supabaseUrl && supabaseUrl.startsWith('http'))
   ? createClient(supabaseUrl, supabaseAnonKey, {
       auth: {
         storageKey: 'psicocita-auth',
         autoRefreshToken: true,
         persistSession: true,
-        multiTab: false
+        // multiTab: false  ← ELIMINADO: esto rompía otras pestañas
       }
     })
   : null;
