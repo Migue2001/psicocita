@@ -12,7 +12,7 @@ import { es } from 'date-fns/locale';
 import { ArrowLeft, User, Phone, Mail, Clock, FileText, CheckCircle, Edit3, Lock, Trash2 } from 'lucide-react';
 import { useToast } from '../components/toast';
 import { ConfirmModal } from '../components/ConfirmModal';
-import { canEditClinical } from '../lib/roles';
+import { canEditClinical, canManage } from '../lib/roles';
 
 const safeFormatDate = (dateString, formatStr, options = {}) => {
   if (!dateString) return '-';
@@ -141,17 +141,19 @@ export const PatientDetail = () => {
                 <span className="font-medium">{safeFormatDate(patient.created_at, 'MMM yyyy')}</span>
               </div>
               
-              <div className="w-full border-t pt-4 mt-2">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="w-full text-error border-error hover:bg-error-light" 
-                  onClick={() => setConfirmDeleteOpen(true)}
-                  disabled={isDeleting}
-                >
-                  <Trash2 size={14} /> {isDeleting ? 'Eliminando...' : 'Eliminar Paciente'}
-                </Button>
-              </div>
+              {canManage(user?.role) && (
+                <div className="w-full border-t pt-4 mt-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="w-full text-error border-error hover:bg-error-light" 
+                    onClick={() => setConfirmDeleteOpen(true)}
+                    disabled={isDeleting}
+                  >
+                    <Trash2 size={14} /> {isDeleting ? 'Eliminando...' : 'Eliminar Paciente'}
+                  </Button>
+                </div>
+              )}
             </CardContent>
           </Card>
 
