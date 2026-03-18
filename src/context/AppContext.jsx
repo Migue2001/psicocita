@@ -109,13 +109,12 @@ export const AppProvider = ({ children }) => {
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'appointments' },
-        () => { fetchData(); }
+        () => { setTimeout(() => fetchData(), 800); }
       )
       .on(
         'postgres_changes',
         { event: 'UPDATE', schema: 'public', table: 'app_config' },
         (payload) => {
-          // Cuando el admin cambia el horario, todos los usuarios lo reciben al instante
           if (payload.new) {
             setSchedule({
               start_hour: payload.new.start_hour ?? 9,
@@ -241,6 +240,29 @@ export const AppProvider = ({ children }) => {
     return { data, error };
   };
 
+  const markAppointmentComplete = async (appId) => {
+    if (isDemoMode) {
+      const updated = appointments.map(app =>
+        app.id === appId ? { ...app, status: 'completed' } : app
+      );
+      setAppointments(updated);
+      localStorage.setItem('psico_apps', JSON.stringify(updated));
+      return { error: null };
+    }
+
+    const { error } = await supabase
+      .from('appointments')
+      .update({ status: 'completed' })
+      .eq('id', appId);
+
+    if (!error) {
+      setAppointments(prev =>
+        prev.map(app => app.id === appId ? { ...app, status: 'completed' } : app)
+      );
+    }
+    return { error };
+  };
+
   const deletePatient = async (id) => {
     if (isDemoMode) {
       const updatedPats = patients.filter(p => p.id !== id);
@@ -309,6 +331,7 @@ export const AppProvider = ({ children }) => {
       updatePatient,
       deletePatient,
       cancelAppointment,
+      markAppointmentComplete,
       fetchData,
       saveSchedule,
       isDemoMode,
