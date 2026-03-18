@@ -13,7 +13,6 @@ import { Notifications } from './pages/Notifications';
 import { Admin } from './pages/Admin';
 import { Register } from './pages/Register';
 import { ToastProvider } from './components/toast';
-import { DebugStatus } from './components/DebugStatus';
 
 class AppErrorBoundary extends Component {
   constructor(props) {
@@ -73,7 +72,6 @@ const AdminRoute = ({ children }) => {
 const AppRoutes = () => {
   return (
     <>
-      <DebugStatus />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
