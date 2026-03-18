@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useId } from 'react';
 import './Input.css';
 
 export const Input = forwardRef(({ 
@@ -10,7 +10,8 @@ export const Input = forwardRef(({
   icon: Icon,
   ...props 
 }, ref) => {
-  const inputId = props.id || `input-${Math.random().toString(36).substring(2, 9)}`;
+  const generatedId = useId();
+  const inputId = props.id || generatedId;
 
   return (
     <div className={`input-group ${fullWidth ? 'w-full' : ''} ${className}`}>

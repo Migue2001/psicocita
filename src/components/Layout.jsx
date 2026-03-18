@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useApp } from '../context/AppContext';
 import { 
   Calendar as CalendarIcon, 
   Users, 
@@ -15,6 +16,8 @@ import './Layout.css';
 
 export const Layout = () => {
   const { user, signOut } = useAuth();
+  const { notifications } = useApp();
+  const unreadCount = notifications.filter(n => !n.is_read).length;
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -49,7 +52,7 @@ export const Layout = () => {
         <div className="flex items-center gap-4">
           <NavLink to="/notifications" className="notification-btn" onClick={closeMobileMenu}>
             <Bell size={20} />
-            <span className="notification-badge"></span>
+            {unreadCount > 0 && <span className="notification-badge"></span>}
           </NavLink>
           <button className="mobile-menu-btn" onClick={toggleMobileMenu}>
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -117,7 +120,7 @@ export const Layout = () => {
           <div className="header-actions">
             <NavLink to="/notifications" className="notification-btn">
               <Bell size={20} />
-              <span className="notification-badge"></span>
+              {unreadCount > 0 && <span className="notification-badge"></span>}
             </NavLink>
           </div>
         </header>
